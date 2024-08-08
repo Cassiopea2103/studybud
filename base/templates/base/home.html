@@ -2,6 +2,16 @@
 
 
 {% block body %}
-    <h1 class="">this is your home  page with rooms list there </h1>
+    <div>
+        
+        {% for room in rooms %}
+            <div>
+                <h5>
+                    {{ room.id }} -- <a class="text-blue-500" href="{% url 'room' room.id %}"> {{ room.name }} </a> 
+                </h5>
+            </div>
+        {% endfor %}
+            
+    </div>
 {% endblock body %}
     
