@@ -1,3 +1,13 @@
-<nav class="w-full bg-slate-500 p-2 text-2xl">
-    Navbar
-</nav>
+<a href="/">
+    <h1>Studybud</h1>
+</a>
+
+<form method="GET" action="{% url 'home' %}">
+
+    <input 
+        type="text"
+        name="topic"
+        placeholder="Search rooms..."
+    >
+
+</form>

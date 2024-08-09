@@ -1,14 +1,24 @@
 from django.shortcuts import render , redirect 
 from django.http import request 
-from .models import Room 
+from .models import Room , Topic
 from .forms import RoomForm 
 
 
 # Home page : 
 def home ( request ) : 
 
-    rooms = Room.objects.all () 
-    context = { "rooms" : rooms } 
+
+    topics = Topic.objects.all () 
+    
+    topic_query = ''
+    if request.GET.get( 'topic' ) is not None :
+        topic_query = request.GET.get( 'topic' )
+    
+    rooms = Room.objects.filter ( topic__name__icontains = topic_query )
+    rooms_count = rooms.count () 
+
+
+    context = { "rooms" : rooms , "rooms_count" : rooms_count ,  "topics" : topics } 
 
     return render ( request , "base/home.html" , context )
 

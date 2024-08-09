@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django_browser_reload",
 ]
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
