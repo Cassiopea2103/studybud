@@ -2,13 +2,23 @@
 
 
 {% block body %}
-    <div>
+    <div class="px-10 mt-4 max-w-7xl">
+
+        <a class="text-blue-500 text-2xl my-4" href="{% url 'create_room' %}">Create Room</a>
         
         {% for room in rooms %}
-            <div>
+            <div class="my-6">
+                
+                <div>
+                    <a class="text-blue-700 text-xl" href="{% url 'update_room' room.id %}">Update</a>
+                    <a class="text-blue-700 text-xl" href="{% url 'delete_room' room.id %}">Delete</a>
+                </div>
+                <h3>{{ room.topic.name }} </h3>
                 <h5>
                     {{ room.id }} -- <a class="text-blue-500" href="{% url 'room' room.id %}"> {{ room.name }} </a> 
                 </h5>
+                <small>@{{ room.host.username }} </small>
+                <hr>
             </div>
         {% endfor %}
             
