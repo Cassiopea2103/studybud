@@ -39,19 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "base.apps.BaseConfig",
-    "tailwind", 
-    "theme",
     "django_browser_reload",
 ]
-
-# register the tailwind 'theme' app : 
-TAILWIND_APP_NAME = 'theme'
-
-INTERNAL_IPS = [
-    "0.0.0.0",
-]
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
-
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
