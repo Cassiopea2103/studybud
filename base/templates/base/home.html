@@ -23,7 +23,7 @@
             </div>            
             {% for topic in topics %}
                 <div>
-                    <a href="{% url 'home' %}?topic={{ topic.name }}">
+                    <a href="{% url 'home' %}?query={{ topic.name }}">
                         {{ topic.name }}
                     </a>
                 </div>

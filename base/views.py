@@ -1,5 +1,8 @@
 from django.shortcuts import render , redirect 
 from django.http import request 
+from django.db.models import Q 
+
+
 from .models import Room , Topic
 from .forms import RoomForm 
 
@@ -10,11 +13,15 @@ def home ( request ) :
 
     topics = Topic.objects.all () 
     
-    topic_query = ''
-    if request.GET.get( 'topic' ) is not None :
-        topic_query = request.GET.get( 'topic' )
+    query = ''
+    if request.GET.get( 'query' ) is not None :
+        query = request.GET.get( 'query' )
     
-    rooms = Room.objects.filter ( topic__name__icontains = topic_query )
+    rooms = Room.objects.filter ( 
+        Q ( topic__name__icontains = query ) | 
+        Q ( name__icontains = query ) | 
+        Q ( host__username__icontains = query )
+     )
     rooms_count = rooms.count () 
 
 
