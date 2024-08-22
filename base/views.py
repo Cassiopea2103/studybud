@@ -1,5 +1,6 @@
 from django.shortcuts import render , redirect 
 from django.http import request 
+from django.http.response import HttpResponse 
 from django.db.models import Q 
 from django.contrib import messages 
 
@@ -125,6 +126,10 @@ def update_room ( request , room_id ) :
 
     # intiialize room with prefilled data :
     room_form = RoomForm ( instance = found_room ) 
+
+    # allow update only to room host : 
+    if request.user != found_room.host :
+        return HttpResponse ( "Sorry . You are not allowed here !" )
 
     if request.method == 'POST':
         # change form data with request data : 
