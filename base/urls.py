@@ -3,6 +3,10 @@ from . import views
 
 
 urlpatterns = [
+    path ( "register/" , views.userRegister , name = "register" ) ,
+    path ( "login/" , views.userLogin ,name = "login") ,
+    path ( "logout/" , views.logoutUser , name = "logout" ) ,
+
     path ( "" , views.home , name = "home" ) , 
     path ( "room/<str:room_id>", views.room , name = "room" ) ,
 

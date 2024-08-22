@@ -1,10 +1,64 @@
 from django.shortcuts import render , redirect 
 from django.http import request 
 from django.db.models import Q 
-
+from django.contrib import messages 
 
 from .models import Room , Topic
 from .forms import RoomForm 
+from django.contrib.auth.models import User 
+from django.contrib.auth.decorators import login_required 
+from django.contrib.auth import authenticate , login , logout 
+
+# register user : 
+def userRegister ( request ) : 
+
+    context = {}
+    
+    return render ( request , 'base/login_register.html' , context  )
+
+# Login : 
+def userLogin ( request ) : 
+    
+    # retrieve the request data : 
+    if request.method == 'POST':
+        username = request.POST.get ( 'username' )
+        password = request.POST.get ( 'password' )
+
+        # try to find the user : 
+        try :
+            found_user = User.objects.get ( username = username ) 
+
+            # authenticate the user : 
+            found_user = authenticate ( request , username = username , password = password ) 
+
+            # login the user : 
+            if found_user is not None : 
+                login ( request , found_user ) 
+
+                # redirect to home page : 
+                return redirect ( 'home' ) 
+
+            else : 
+                # create an authentication error message : 
+                messages.error ( request , "Wrong password" )  
+        except : 
+            messages.error ( request , "User does not exist" )
+
+        
+       
+    
+    
+    context = {} 
+    return render ( request , 'base/login_register.html', context )
+
+
+# logout : 
+def logoutUser ( request ) : 
+
+    logout ( request )
+    
+    return redirect ( 'home' ) 
+
 
 
 # Home page : 
@@ -39,7 +93,7 @@ def room ( request , room_id ) :
      
     return render ( request , "base/room.html" , context  )
 
-
+@login_required  ( login_url = "login" )
 # Create Room : 
 def create_room ( request ) : 
 
