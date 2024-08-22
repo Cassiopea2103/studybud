@@ -7,18 +7,54 @@ from django.contrib import messages
 from .models import Room , Topic
 from .forms import RoomForm 
 from django.contrib.auth.models import User 
+from django.contrib.auth.forms import UserCreationForm  
 from django.contrib.auth.decorators import login_required 
 from django.contrib.auth import authenticate , login , logout 
 
 # register user : 
 def userRegister ( request ) : 
+    page = "register"
 
-    context = {}
+    # new user creation form object : 
+    user_form = UserCreationForm () ; 
+
+    # check if request method is POST : 
+    if request.method == "POST" : 
+        # fill user creation form with request data : 
+        user_form = UserCreationForm ( request.POST ) 
+
+        # check form data validity : 
+        if user_form.is_valid () : 
+            # save the form - but don't commit yet : 
+            new_user = user_form.save ( commit = False ) 
+
+            # new user username to lowercase : 
+            new_user.username = new_user.username.lower() 
+
+            # now save the new user : 
+            new_user.save () 
+
+            # login the new user : 
+            login ( request , new_user )
+
+            # redirect to the home page : 
+            return redirect ( "home" )
+
+        # otherwise return flash message error on user form : 
+        else :
+            messages.error ( request , "An error happened with the new user registration!" )    
+
+    context = { "page" : page , "user_form" : user_form }
     
     return render ( request , 'base/login_register.html' , context  )
 
 # Login : 
 def userLogin ( request ) : 
+
+    page = "login"
+
+    if request.user.is_authenticated : 
+        return redirect ('home') 
     
     # retrieve the request data : 
     if request.method == 'POST':
@@ -45,11 +81,9 @@ def userLogin ( request ) :
         except : 
             messages.error ( request , "User does not exist" )
 
-        
-       
+            
     
-    
-    context = {} 
+    context = { "page" : page  } 
     return render ( request , 'base/login_register.html', context )
 
 
@@ -102,7 +136,7 @@ def create_room ( request ) :
     room_form = RoomForm () 
 
     if request.method == "POST" :
-        # infer form with request data : 
+        # fill form with request data : 
         room_form = RoomForm ( request.POST ) 
 
         # check for form validity : 
@@ -132,7 +166,7 @@ def update_room ( request , room_id ) :
         return HttpResponse ( "Sorry . You are not allowed here !" )
 
     if request.method == 'POST':
-        # change form data with request data : 
+        # fill form with request data : 
         room_form = RoomForm ( request.POST , instance = found_room ) 
         
         # check form validity : 
