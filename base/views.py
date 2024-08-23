@@ -112,9 +112,19 @@ def home ( request ) :
         Q ( host__username__icontains = query )
      )
     rooms_count = rooms.count () 
+    rooms_messages = Message.objects.all ().filter ( 
+        Q ( room__topic__name__icontains = query ) |
+        Q ( room__name = query ) | 
+        Q ( sender__username = query )
+    ) ; 
 
 
-    context = { "rooms" : rooms , "rooms_count" : rooms_count ,  "topics" : topics } 
+    context = { 
+        "rooms" : rooms , 
+        "rooms_count" : rooms_count ,  
+        "topics" : topics , 
+        "rooms_messages" : rooms_messages
+    } 
 
     return render ( request , "base/home.html" , context )
 
@@ -126,7 +136,7 @@ def room ( request , room_id ) :
         room = Room.objects.get ( id = room_id ) 
 
         # collect room messages : 
-        room_messages = room.message_set.all().order_by ( "-created" )
+        room_messages = room.message_set.all()
         # collect room participants : 
         room_participants = room.participants.all()  
 
@@ -227,7 +237,7 @@ def delete_room ( request , room_id ) :
 
 @login_required ( login_url = "login" ) 
 def delete_message ( request , message_id ) : 
-    
+
     # retrieve the corresponding id message : 
     room_message = Message.objects.get ( id = message_id ) 
 
@@ -235,14 +245,18 @@ def delete_message ( request , message_id ) :
     if request.user != room_message.sender : 
         return HttpResponse ( "Sorry ! You do not have enough permissions for this action!")
     
+    
     # delete message : 
     if request.method == "POST" : 
         room_message.delete () 
+        
+        # redirect to home or room accordingly :
+        previous_url = request.POST.get('previous_url')     
+        print ( "previous url" , previous_url)
 
-        #  remove message sender from room participants if he has no messages left in the chat : 
-        # if not Message.objects.filter ( sender = request.user , room = room_message.room ).exists () :
-        #     room_message.room.participants.remove ( request.user ) 
-
-        return redirect ( "room" , room_id = room_message.room.id )
+        if "room" in previous_url : 
+            return redirect ( "room" , room_id = room_message.room.id )
+        else :
+            return redirect ( "home" )
     
     return render ( request , 'base/delete_object.html' , { "object" : room_message } )

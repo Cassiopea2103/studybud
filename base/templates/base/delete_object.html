@@ -5,6 +5,9 @@
     <form method="POST">
         {% csrf_token %}
 
+        <input type="hidden" name="previous_url" value="{{ request.META.HTTP_REFERER }}">
+
+
         <a class="text-blue-500 text-xl" href="{{ request.META.HTTP_REFERER }}">GO BACK</a>
 
         <div class="flex flex-col gap-2">
