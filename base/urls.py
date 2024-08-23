@@ -7,6 +7,8 @@ urlpatterns = [
     path ( "login/" , views.userLogin ,name = "login") ,
     path ( "logout/" , views.logoutUser , name = "logout" ) ,
 
+    path ( "user_profile/<str:user_id>" , views.user_profile , name = "user_profile" ) ,
+
     path ( "" , views.home , name = "home" ) , 
 
     path ( "room/<str:room_id>", views.room , name = "room" ) ,

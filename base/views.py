@@ -88,11 +88,30 @@ def userLogin ( request ) :
 
 
 # logout : 
-def logoutUser ( request ) : 
+def logoutUser ( request  ) : 
 
     logout ( request )
     
     return redirect ( 'home' ) 
+
+
+# User profile : 
+def user_profile ( request , user_id ) : 
+    
+    # retrieve the user : 
+    user = User.objects.get ( id = user_id ) 
+    user_topics = Topic.objects.all () 
+    user_rooms = user.room_set.all () 
+    user_messages = user.message_set.all () 
+
+    context = { 
+        "topics" : user_topics , 
+        "user" : user , 
+        "rooms" : user_rooms , 
+        "rooms_messages" : user_messages ,  
+    }
+
+    return render ( request , 'base/user_profile.html' , context )
 
 
 

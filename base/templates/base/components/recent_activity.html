@@ -4,7 +4,10 @@
 
 {% for rooms_message in rooms_messages %}
     <div>
-        <small>{{ rooms_message.sender }} {{ rooms_message.created | timesince }} ago</small>
+        <small>
+            <a href="{% url 'user_profile' rooms_message.sender.id %}"> {{ rooms_message.sender }} </a> 
+            {{ rooms_message.created | timesince }} ago
+        </small>
         <small>Replied to {{ rooms_message.room }} </small>
         
         <p> {{ rooms_message.body }} </p>
