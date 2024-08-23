@@ -1,0 +1,19 @@
+{% extends 'main.html' %}
+
+
+{% block body %}
+
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <a href="{{ request.META.HTTP_REFERER }}">GO BACK</a>
+        {{ room_form.as_p }}
+
+        <input 
+            class="px-4 py-2 border border-1 border-slate-800 rounded-md bg-blue-300 hover:cursor-pointer"
+            type="submit" value= "{{ button }}"
+        />
+    </form>
+{% endblock body %}
+    

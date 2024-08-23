@@ -189,28 +189,36 @@ def create_room ( request ) :
     # intial empty room form : 
     room_form = RoomForm () 
 
+    # retrieve topics list : 
+    topics  = Topic.objects.all () 
+
     if request.method == "POST" :
-        # fill form with request data : 
-        room_form = RoomForm ( request.POST ) 
+        # retrieve request data : 
+        topic_name = request.POST.get ( "topic" ) 
+        topic , created = Topic.objects.get_or_create ( name = topic_name )
+        name = request.POST.get ( "name" ) 
+        description = request.POST.get ( "description" )
 
-        # check for form validity : 
-        if room_form.is_valid : 
-            # save it then : 
-            new_room = room_form.save ( commit = False ) 
-
-            # set the room host to the request user : 
-            new_room.host = request.user 
-
-            # now save the newly created room : 
-            new_room.save () 
-
-             # add request user to room participants : 
-            new_room.participants.add ( request.user ) 
+        try : 
+            # create the new room : 
+            new_room = Room.objects.create ( 
+                topic = topic ,
+                name = name , 
+                host = request.user ,
+                description = description , 
+            )
             
-            # redirect user to home page : 
-            return redirect ( 'home')
+            # add the request user ( room creator ) as a participant : 
+            new_room.participants.add ( request.user )
 
-    context = { 'room_form' : room_form , 'button' : 'Create room'}
+            # redirect to room page : 
+            return redirect ( 'room' , new_room.id )
+
+        except : 
+            return HttpResponse ( "An error occured while creating a new room")
+
+    
+    context = { 'room_form' : room_form , 'topics' : topics , 'button' : 'Create room' }
 
 
     return render ( request , 'base/create_update_room.html' , context ) 
@@ -222,25 +230,37 @@ def update_room ( request , room_id ) :
     # retrieve specific room with id :  
     found_room = Room.objects.get ( id = room_id ) 
 
-    # intiialize room with prefilled data :
-    room_form = RoomForm ( instance = found_room ) 
+    # initialize a room form with found room data : 
+    room_form = RoomForm ( instance = found_room )
+
+    # retrieve topics list : 
+    topics  = Topic.objects.all () 
 
     # allow update only to room host : 
     if request.user != found_room.host :
         return HttpResponse ( "Sorry . You are not allowed here !" )
 
     if request.method == 'POST':
-        # fill form with request data : 
-        room_form = RoomForm ( request.POST , instance = found_room ) 
+
+        # retrieve request data : 
+        topic_name = request.POST.get ( "topic" ) 
+        topic , created = Topic.objects.get_or_create ( name = topic_name )
+        name = request.POST.get ( "name" ) 
+        description = request.POST.get ( "description" )
+
+        #  update the found room data : 
+        found_room.topic = topic 
+        found_room.name = name 
+        found_room.description = description 
+
+        # save the updated room : 
+        found_room.save () 
+
+      
+        # redirect user to home page : 
+        return redirect ( 'home' ) 
         
-        # check form validity : 
-        if room_form.is_valid () : 
-            # save it : 
-            room_form.save () 
-            # redirect user to home page : 
-            return redirect ( 'home' ) 
-        
-    context = { 'room_form': room_form , 'button' : 'Update room'}
+    context = { 'room_form': room_form , 'room' : found_room ,'topics' : topics , 'button' : 'Update room'}
         
     return render ( request , 'base/create_update_room.html' , context )
 
