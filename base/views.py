@@ -4,7 +4,7 @@ from django.http.response import HttpResponse
 from django.db.models import Q 
 from django.contrib import messages 
 
-from .models import Room , Topic
+from .models import Room , Topic , Message 
 from .forms import RoomForm 
 from django.contrib.auth.models import User 
 from django.contrib.auth.forms import UserCreationForm  
@@ -121,12 +121,37 @@ def home ( request ) :
 # Single room page : 
 def room ( request , room_id ) :
     
-    room = Room.objects.get ( id = room_id ) 
+    # try to fetch the room in the database : 
+    try : 
+        room = Room.objects.get ( id = room_id ) 
 
-    if room is not None : 
-        context = { "room" : room }
+        # collect room messages : 
+        room_messages = room.message_set.all().order_by ( "-created" )
+        # collect room participants : 
+        room_participants = room.participants.all()  
+
+        # handle the message post creation : 
+        if request.method == "POST" : 
+            # create the new message item : 
+            new_message = Message.objects.create (
+                sender = request.user , 
+                room = room , 
+                body = request.POST.get ( "body" ) 
+            )
+            # add the request user ( message send ) to the room participants : 
+            room.participants.add ( request.user ) 
+            # return redirect to the single room page : 
+            return redirect ( "room" , room_id = room.id ) 
+
+        context = { "room" : room , "room_messages" : room_messages , "participants" : room_participants }
+
+    except : 
+        return HttpResponse ( "Room does not exist !" ) 
      
     return render ( request , "base/room.html" , context  )
+
+
+
 
 @login_required  ( login_url = "login" )
 # Create Room : 
