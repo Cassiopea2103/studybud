@@ -24,6 +24,11 @@
             <!-- display room messages :  -->
             {% for message in room_messages %} 
                 <div>
+                    <!-- delete message feature -->
+                    
+                    {% if request.user == message.sender %}
+                        <a href="{% url 'delete_message' message.id %}">Delete</a>
+                    {% endif %}
                     <small> {{ message.sender }} {{ message.created | timesince }} ago </small>
                     <p> {{ message.body }}</p>
 

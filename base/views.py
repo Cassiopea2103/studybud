@@ -222,3 +222,27 @@ def delete_room ( request , room_id ) :
     context = { 'object' : room }
 
     return render ( request , 'base/delete_object.html' , context )
+
+
+
+@login_required ( login_url = "login" ) 
+def delete_message ( request , message_id ) : 
+    
+    # retrieve the corresponding id message : 
+    room_message = Message.objects.get ( id = message_id ) 
+
+    # ensure request user is the same as message sender : 
+    if request.user != room_message.sender : 
+        return HttpResponse ( "Sorry ! You do not have enough permissions for this action!")
+    
+    # delete message : 
+    if request.method == "POST" : 
+        room_message.delete () 
+
+        #  remove message sender from room participants if he has no messages left in the chat : 
+        # if not Message.objects.filter ( sender = request.user , room = room_message.room ).exists () :
+        #     room_message.room.participants.remove ( request.user ) 
+
+        return redirect ( "room" , room_id = room_message.room.id )
+    
+    return render ( request , 'base/delete_object.html' , { "object" : room_message } )
