@@ -13,73 +13,21 @@
 
         <!-- topics -->
         <div>
-            <h3>
-                Browse Topics
-            </h3>
-            <hr>
-
-            <div>
-                <a href="{% url 'home' %}">All</a>
-            </div>            
-            {% for topic in topics %}
-                <div>
-                    <a href="{% url 'home' %}?query={{ topic.name }}">
-                        {{ topic.name }}
-                    </a>
-                </div>
-            {% endfor %}
-                
+            {% include 'base/components/topics.html' %}                
         </div>
         
         
         <!-- rooms -->
         <div>
             <h5>{{ rooms_count }} rooms available .</h5>
-            <a  href="{% url 'create_room' %}">Create Room</a>
-
-            {% for room in rooms %}
-                <div class="my-6">
-                    
-                    
-                    {% if request.user == room.host %}
-                        <div>
-                            <a href="{% url 'update_room' room.id %}">Update</a>
-                            <a href="{% url 'delete_room' room.id %}">Delete</a>
-                        </div>
-                    {% endif %}
-                        
-                    <h3>{{ room.topic.name }} </h3>
-                    <h5>
-                        {{ room.id }} -- <a class="text-blue-500" href="{% url 'room' room.id %}"> {{ room.name }} </a> 
-                    </h5>
-                    <small>@{{ room.host.username }} </small>
-                    <hr>
-                </div>
-            {% endfor %}
+            <a href="{% url 'create_room' %}">Create Room</a>
+            {% include 'base/components/feed.html' %}
         </div>  
         
         
         <!-- recent activity -->
         <div>
-            <h3>Recent Activity</h3>
-            <hr>
-
-            
-            {% for rooms_message in rooms_messages %}
-                <div>
-                    <small>{{ rooms_message.sender }} {{ rooms_message.created | timesince }} ago</small>
-                    <small>Replied to {{ rooms_message.room }} </small>
-                    
-                    <p> {{ rooms_message.body }} </p>
-
-                     {% if request.user == rooms_message.sender %}
-                        <a href="{% url 'delete_message' rooms_message.id %}">Delete</a>
-                    {% endif %}
-
-                    <hr>
-                </div>
-            {% endfor %}
-                
+            {% include 'base/components/recent_activity.html' %}                
         </div>
     </div>
 {% endblock body %}
