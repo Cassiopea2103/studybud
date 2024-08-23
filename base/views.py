@@ -196,7 +196,17 @@ def create_room ( request ) :
         # check for form validity : 
         if room_form.is_valid : 
             # save it then : 
-            room_form.save () 
+            new_room = room_form.save ( commit = False ) 
+
+            # set the room host to the request user : 
+            new_room.host = request.user 
+
+            # now save the newly created room : 
+            new_room.save () 
+
+             # add request user to room participants : 
+            new_room.participants.add ( request.user ) 
+            
             # redirect user to home page : 
             return redirect ( 'home')
 
