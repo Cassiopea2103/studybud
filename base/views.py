@@ -5,8 +5,7 @@ from django.db.models import Q
 from django.contrib import messages 
 
 from .models import User , Topic , Room , Message 
-from .forms import RoomForm , UserForm 
-from django.contrib.auth.forms import UserCreationForm  
+from .forms import RoomForm , UserForm , MyUserCreationForm
 from django.contrib.auth.decorators import login_required 
 from django.contrib.auth import authenticate , login , logout 
 
@@ -15,12 +14,13 @@ def userRegister ( request ) :
     page = "register"
 
     # new user creation form object : 
-    user_form = UserCreationForm () ; 
+    user_form = MyUserCreationForm () ; 
+    print ( user_form ) 
 
     # check if request method is POST : 
     if request.method == "POST" : 
         # fill user creation form with request data : 
-        user_form = UserCreationForm ( request.POST ) 
+        user_form = MyUserCreationForm ( request.POST ) 
 
         # check form data validity : 
         if user_form.is_valid () : 
@@ -127,7 +127,7 @@ def update_user ( request   ) :
 
     if request.method == "POST" : 
         # fill the form with request data : 
-        user_form = UserForm ( request.POST , instance = user ) 
+        user_form = UserForm ( request.POST , request.FILES , instance = user ) 
 
         # check form validity : 
         if user_form.is_valid () : 

@@ -4,16 +4,17 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 # Custom user creation form : 
-class MyUserCreationForm ( ModelForm ) : 
+class MyUserCreationForm ( UserCreationForm ) : 
     class Meta : 
         model = User 
-        fields = [ "username" , "name" , "email" , "bio" , "avatar" ]
+        fields = [ "username" ,  "name" , "email" , "password1" , "password2" ]
+        exclude = [ "usable_password" ]
 
 #UserForm : 
 class UserForm ( ModelForm ) : 
     class Meta : 
         model = User 
-        fields = [ "username" , "email" ]
+        fields = [ "username" , "name" , "email" , "bio" , "avatar" ]
 
 
 # RoomForm 
