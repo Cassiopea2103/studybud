@@ -1,5 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import AbstractUser  
+
+
+# User class : 
+class User ( AbstractUser ) : 
+    name = models.CharField ( max_length = 200 , null = True, blank = True ) 
+    email = models.EmailField ( unique = True , null = True , blank = False ) 
+    bio = models.TextField ( blank = True , null = True ) 
+    avatar = models.ImageField ( null = True , blank = True , default = "avatar.svg" ) 
+
+    USERNAME_FIELD = "email" 
+    REQUIRED_FIELDS = [ ] 
 
 # Topic : 
 class Topic ( models.Model ) : 

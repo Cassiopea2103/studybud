@@ -4,9 +4,8 @@ from django.http.response import HttpResponse
 from django.db.models import Q 
 from django.contrib import messages 
 
-from .models import Room , Topic , Message 
+from .models import User , Topic , Room , Message 
 from .forms import RoomForm , UserForm 
-from django.contrib.auth.models import User 
 from django.contrib.auth.forms import UserCreationForm  
 from django.contrib.auth.decorators import login_required 
 from django.contrib.auth import authenticate , login , logout 
@@ -58,15 +57,15 @@ def userLogin ( request ) :
     
     # retrieve the request data : 
     if request.method == 'POST':
-        username = request.POST.get ( 'username' )
+        email = request.POST.get ( 'email' )
         password = request.POST.get ( 'password' )
 
         # try to find the user : 
         try :
-            found_user = User.objects.get ( username = username ) 
+            found_user = User.objects.get ( email = email ) 
 
             # authenticate the user : 
-            found_user = authenticate ( request , username = username , password = password ) 
+            found_user = authenticate ( request , email = email , password = password ) 
 
             # login the user : 
             if found_user is not None : 
