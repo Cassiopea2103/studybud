@@ -11,7 +11,7 @@
             <div class="room__topLeft">
               <a href="{{ request.META.HTTP_REFERER }}">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                  <title>arrow-left</title>
+                  <title>Go Back</title>
                   <path
                     d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"
                   ></path>
@@ -84,7 +84,7 @@
               </div>
               <div class="room__hosted">
                 <p>Hosted By</p>
-                <a href="#" class="room__author">
+                <a href="{% url 'user_profile' room.host.id %}" class="room__author">
                   <div class="avatar avatar--small">
                     <img src="https://randomuser.me/api/portraits/men/37.jpg" />
                   </div>
@@ -104,7 +104,7 @@
                   <div class="thread">
                     <div class="thread__top">
                       <div class="thread__author">
-                        <a href="#" class="thread__authorInfo">
+                        <a href="{% url 'user_profile' room_message.sender.id %}" class="thread__authorInfo">
                           <div class="avatar avatar--small">
                             <img src="https://randomuser.me/api/portraits/men/37.jpg" />
                           </div>

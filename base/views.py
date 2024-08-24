@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.contrib import messages 
 
 from .models import Room , Topic , Message 
-from .forms import RoomForm 
+from .forms import RoomForm , UserForm 
 from django.contrib.auth.models import User 
 from django.contrib.auth.forms import UserCreationForm  
 from django.contrib.auth.decorators import login_required 
@@ -112,6 +112,39 @@ def user_profile ( request , user_id ) :
     }
 
     return render ( request , 'base/user_profile.html' , context )
+
+
+
+
+# update user : 
+@login_required ( login_url = "login" )
+def update_user ( request   ) : 
+
+    # retrieve the request user : 
+    user = request.user 
+    
+    # intialize a user form with found user data : 
+    user_form = UserForm ( instance = user )
+
+    if request.method == "POST" : 
+        # fill the form with request data : 
+        user_form = UserForm ( request.POST , instance = user ) 
+
+        # check form validity : 
+        if user_form.is_valid () : 
+            # user username to lowercase : 
+            user.username = user_form.cleaned_data ["username"].lower()          
+
+            # now save the updated user : 
+            user_form.save () 
+            
+            # redirect user to user profile page : 
+            return redirect ( "user_profile" ,  user.id ) 
+
+    context = { "user_form" : user_form }
+    
+    return render ( request , 'base/update_user.html' , context )
+
 
 
 
@@ -225,6 +258,7 @@ def create_room ( request ) :
 
 
 # update room : 
+@login_required ( login_url = "login" )
 def update_room ( request , room_id ) : 
 
     # retrieve specific room with id :  
@@ -267,6 +301,7 @@ def update_room ( request , room_id ) :
 
 
 # delete room : 
+@login_required ( login_url = "login" )
 def delete_room ( request , room_id ) : 
 
     # retrieve room : 
