@@ -152,7 +152,7 @@ def update_user ( request   ) :
 def home ( request ) : 
 
 
-    topics = Topic.objects.all () 
+    topics = Topic.objects.all () [ 0 : 5 ] 
     
     query = ''
     if request.GET.get( 'query' ) is not None :
@@ -344,3 +344,27 @@ def delete_message ( request , message_id ) :
             return redirect ( "home" )
     
     return render ( request , 'base/delete_object.html' , { "object" : room_message } )
+ 
+
+# Topics : 
+def topics_list ( request ) : 
+
+    if request.GET.get( 'query' ) is not None :
+        query = request.GET.get( 'query' )
+    else : 
+        query = ''
+
+    topics = Topic.objects.filter ( name__icontains = query ) 
+
+    context = { "topics" : topics }
+    return render ( request , 'base/topics.html' , context )
+
+
+# Activities : 
+def activities ( request ) :
+
+    rooms_messages = Message.objects.all ()
+
+    context = { "rooms_messages" : rooms_messages } 
+
+    return render ( request , 'base/activity.html' , context )
